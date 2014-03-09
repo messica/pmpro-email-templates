@@ -1,7 +1,5 @@
 jQuery(document).ready(function($) {
 
-    console.log('pmproet initlialized');
-
     $subject = $("#email_template_subject").closest("tr");
     $editor = $("#wp-email_template_body-wrap");
     var template;
@@ -12,8 +10,7 @@ jQuery(document).ready(function($) {
     $("#pmpro_email_template_switcher").change(function() {
         $(".status_message").hide();
         template = $(this).val();
-        console.log('template');
-        console.log(template);
+
         if (template) {
             templateSwitcher(template);
         }
@@ -44,8 +41,7 @@ jQuery(document).ready(function($) {
             }
 
             //get subject from cookie
-            console.log('cookie');
-
+            
             $("#template_editor_container").html(response);
 
             // initialize new editor

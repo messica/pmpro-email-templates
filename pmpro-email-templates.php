@@ -47,13 +47,14 @@ function pmproet_admin_page()
     require_once( plugin_dir_path(__FILE__) ) . "adminpages/emailtemplates.php";
 }
 
-//enqueue js
-function pmproet_js() {
-    if ($_REQUEST['page'] == 'pmpro-email-templates')
-        fb(plugin_dir_url(__FILE__));
+//enqueue js/css
+function pmproet_scripts() {
+    if ($_REQUEST['page'] == 'pmpro-email-templates') {
         wp_enqueue_script('pmproet', plugin_dir_url(__FILE__) . 'js/pmproet.js', array('jquery'), null, false);
+        wp_enqueue_style('pmproet', plugin_dir_url(__FILE__) . 'css/pmproet.css');
+    }
 }
-add_action('admin_enqueue_scripts', 'pmproet_js');
+add_action('admin_enqueue_scripts', 'pmproet_scripts');
 
 /*
  * AJAX Functions
@@ -79,9 +80,6 @@ function pmproet_get_template_data() {
         $template_data['subject'] = $pmproet_email_defaults[$template];
     }
 
-    fb('template data');
-    fb($template_data);
-
     //return js to change subject value
     echo '<script>jQuery("#email_template_subject").val("' . $template_data['subject'] . '");</script>';
 
@@ -95,8 +93,6 @@ add_action('wp_ajax_pmproet_get_template_data', 'pmproet_get_template_data');
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
 
-    fb($email->template);
-    fb(pmpro_getOption('email_header_body'));
     if (pmpro_getOption($email->template . '_subject'))
         $email->subject = pmpro_getOption('email_' . $email->template . '_subject');
 
@@ -119,17 +115,13 @@ function pmproet_email_filter($email) {
         $email->body = str_replace("!!" . $key . "!!", $value, $email->body);
         $email->subject = str_replace("!!" . $key . "!!", $value, $email->subject);
     }
-    fb($email);
-    die();
+
     return $email;
 }
 add_filter('pmpro_email_filter', 'pmproet_email_filter');
 
 /* Filter for Variables */
 function pmproet_email_data($data, $email) {
-
-    fb('email before data filter');
-    fb($email);
 
     global $current_user, $pmpro_currency_symbol, $wpdb;
 
@@ -138,15 +130,7 @@ function pmproet_email_data($data, $email) {
         $user = $current_user;
     $pmpro_user_meta = $wpdb->get_row("SELECT * FROM wp_pmpro_memberships_users WHERE user_id = '" . $user->ID . "' AND status='active'");
 
-    fb('user');
-    fb($user);
-
-    fb('pmpro_user_meta');
-    fb($pmpro_user_meta);
-
     $invoice = new MemberOrder($data['invoice_id']);
-    fb('invoice');
-    fb($invoice);
 
     $data = array(
 
@@ -211,8 +195,6 @@ function pmproet_email_data($data, $email) {
     if ($pmpro_user_meta->enddate)
         $data['membership_expiration'] = "<p>" . sprintf(__("This membership will expire on %s.", "pmpro"), $pmpro_user_meta->enddate . "</p>\n");
 
-
-    fb($data);
     return $data;
 }
 add_filter('pmpro_email_data', 'pmproet_email_data', 10, 2);

@@ -23,9 +23,9 @@ This addon makes it easier to edit the PMPro email templates, using the familiar
 
 ### Frequently Asked Questions
 * I found a bug in the plugin.
---* Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-email-templates/issues
+  * Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-email-templates/issues
 
 ### Changelog
-#### .1
--  This is the initial version of the plugin.
+.1
+  * This is the initial version of the plugin.
 

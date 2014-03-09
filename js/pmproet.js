@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
             }
 
             //get subject from cookie
-            
+
             $("#template_editor_container").html(response);
 
             // initialize new editor

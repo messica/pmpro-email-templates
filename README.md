@@ -27,5 +27,5 @@ This addon makes it easier to edit the PMPro email templates, using the familiar
 
 ### Changelog
 #### .1
---*  This is the initial version of the plugin.
+-  This is the initial version of the plugin.
 

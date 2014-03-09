@@ -2,8 +2,9 @@
 /**
  * Plugin Name: PMPro Email Templates
  * Description: Define your own custom PMPro Email Templates in the familiar WordPress editor.
- * Author: jessica o
- * Version: 0.1
+ * Author: strangerstudios
+ * Author URI: http://www.strangerstudios.com
+ * Version: .1
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */

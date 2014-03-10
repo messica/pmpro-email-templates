@@ -50,7 +50,7 @@ function pmproet_admin_page()
 
 //enqueue js/css
 function pmproet_scripts() {
-    if ($_REQUEST['page'] == 'pmpro-email-templates') {
+    if (!empty($_REQUEST['page']) && $_REQUEST['page'] == 'pmpro-email-templates') {
         wp_enqueue_script('pmproet', plugin_dir_url(__FILE__) . 'js/pmproet.js', array('jquery'), null, false);
         wp_enqueue_style('pmproet', plugin_dir_url(__FILE__) . 'css/pmproet.css');
     }
@@ -72,20 +72,17 @@ function pmproet_get_template_data() {
     $template_data['body'] = pmpro_getOption($template . '_body');
     $template_data['subject'] = pmpro_getOption($template . '_subject');
 
-    if (!$template_data['body']) {
+    if (empty($template_data['body'])) {
         //if not found, get template from PMPro email templates
         $template_data['body'] = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $template) . '.html');
     }
 
-    if (!$template_data['subject']) {
+    if (empty($template_data['subject']) && $template != "email_header" && $template != "email_footer") {
         $template_data['subject'] = $pmproet_email_defaults[$template];
     }
 
-    //return js to change subject value
-    echo '<script>jQuery("#email_template_subject").val("' . $template_data['subject'] . '");</script>';
-
-    //return editor html
-    wp_editor($template_data['body'], 'editor', array('textarea_name' => 'template_body' ));
+    echo json_encode($template_data);
+	
     die();
 }
 add_action('wp_ajax_pmproet_get_template_data', 'pmproet_get_template_data');

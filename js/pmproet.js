@@ -15,8 +15,7 @@ jQuery(document).ready(function($) {
             templateSwitcher(template);
         }
         else {
-            $(".hide-while-loading").hide();
-            $("#template_editor_container").html("");
+            $(".hide-while-loading").hide();            
         }
     });
 
@@ -33,25 +32,18 @@ jQuery(document).ready(function($) {
 
         $.post(ajaxurl, $data, function(response) {
 
-            $("#pmproet-spinner").hide();
-            $(".hide-while-loading").show();
+            var template = $.parseJSON(response);
+			
+			$("#pmproet-spinner").hide();
+            $(".hide-while-loading").show();           
 
-            if (template !== 'email_header' || template !== 'email_footer') {
-                $subject.show();
-            }
-
-            //get subject from cookie
-
-            $("#template_editor_container").html(response);
-
-            // initialize new editor
-            tinyMCE.init({
-                skin : "wp_theme",
-                mode : "exact",
-                elements: "editor",
-                theme: "advanced",
-                valid_elements: "*"
-            });
+			console.log(template);
+			console.log(template['subject']);
+			console.log(template['body']);
+			
+            // set values
+			$('#email_template_subject').val(template['subject']);
+			$('#email_template_body').val(template['body']);			            
 
             if (template == 'email_header' || template == 'email_footer') {
                 $subject.hide();

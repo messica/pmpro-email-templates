@@ -4,7 +4,7 @@ Contributors: strangerstudios, jessica o
 Tags: pmpro, email, templates, customize, member, membership, subscription, addon
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: .1
+Stable tag: .2
 
 == Description ==
 This addon makes it easier to edit the PMPro email templates, using the familiar WordPress WYSIWYG editor.
@@ -24,6 +24,10 @@ This addon makes it easier to edit the PMPro email templates, using the familiar
   * Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-email-templates/issues
 
 == Changelog ==
+= .2 =
+* Removed wp editor.
+* Fixed some warnings.
+
 = .1 =
   * This is the initial version of the plugin.
 

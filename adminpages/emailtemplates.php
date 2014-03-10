@@ -13,7 +13,7 @@ if(!empty($_REQUEST['savesettings']))
 {
     //update this template's settings
     pmpro_setOption($_REQUEST['pmpro_email_template_switcher'] . '_subject', $_REQUEST['email_template_subject']);
-    pmpro_setOption($_REQUEST['pmpro_email_template_switcher'] . '_body', $_REQUEST['template_body']);
+    pmpro_setOption($_REQUEST['pmpro_email_template_switcher'] . '_body', $_REQUEST['email_template_body']);
 
     //assume success
     $msg = true;
@@ -83,7 +83,8 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                 <th scope="row" valign="top"><label for="email_template_body">Body</label></th>
                 <td>
                     <div id="template_editor_container">
-                        <?php wp_editor('', 'blank'); ?>
+                        <?php //wp_editor('', 'blank'); ?>
+						<textarea rows="10" cols="80" name="email_template_body" id="email_template_body"></textarea>
                     </div>
                 </td>
             </tr>

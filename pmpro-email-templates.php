@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name: PMPro Email Templates
- * Description: Define your own custom PMPro Email Templates in the familiar WordPress editor.
- * Author: strangerstudios
+ * Description: Define your own custom PMPro HTML Email Templates.
+ * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
- * Version: .1
+ * Version: .2
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */
@@ -87,6 +87,36 @@ function pmproet_get_template_data() {
 }
 add_action('wp_ajax_pmproet_get_template_data', 'pmproet_get_template_data');
 
+//save template data
+function pmproet_save_template_data() {
+
+    //update this template's settings
+    pmpro_setOption($_REQUEST['template'] . '_subject', $_REQUEST['subject']);
+    pmpro_setOption($_REQUEST['template'] . '_body', $_REQUEST['body']);
+    echo 'Template Saved';
+    die();
+}
+add_action('wp_ajax_pmproet_save_template_data', 'pmproet_save_template_data');
+
+//reset template data
+function pmproet_reset_template_data() {
+
+    global $pmproet_email_defaults;
+
+    $template = $_REQUEST['template'];
+
+    delete_option('pmpro_' . $template . '_subject');
+    delete_option('pmpro_' . $template . '_body');
+
+    $template_data['subject'] = $pmproet_email_defaults[$template];
+    $template_data['body'] = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $template) . '.html');
+
+    echo json_encode($template_data);
+    die();
+}
+add_action('wp_ajax_pmproet_reset_template_data', 'pmproet_reset_template_data');
+
+
 
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
@@ -97,12 +127,8 @@ function pmproet_email_filter($email) {
     if (pmpro_getOption('email_header_body'))
         $email->body = pmpro_getOption('email_header_body');
 
-    if (pmpro_getOption($email->template . '_body')) {
+    if (pmpro_getOption('email_' . $email->template . '_body'))
         $email->body .= pmpro_getOption('email_' . $email->template . '_body');
-    }
-    else {
-        $email->body .= file_get_contents( PMPRO_DIR . '/email/' . $email->template . '.html');
-    }
 
     if (pmpro_getOption('email_footer_body'))
         $email->body .= pmpro_getOption('email_footer_body');

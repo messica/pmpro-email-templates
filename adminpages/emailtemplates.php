@@ -7,19 +7,6 @@ if(!function_exists("current_user_can") || (!current_user_can("manage_options") 
 
 global $wpdb, $msg, $msgt, $pmproet_email_defaults;
 
-//save settings
-global $pmpro_pages;
-if(!empty($_REQUEST['savesettings']))
-{
-    //update this template's settings
-    pmpro_setOption($_REQUEST['pmpro_email_template_switcher'] . '_subject', $_REQUEST['email_template_subject']);
-    pmpro_setOption($_REQUEST['pmpro_email_template_switcher'] . '_body', $_REQUEST['email_template_body']);
-
-    //assume success
-    $msg = true;
-    $msgt = "Your email template settings have been updated.";
-}
-
 require_once(PMPRO_DIR . "/adminpages/admin_header.php");
 ?>
 
@@ -27,10 +14,13 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
         <h2><?php _e('Email Templates', 'pmpro');?></h2>
 
         <table class="form-table">
-            <tr class="status" style="display:none;">
+            <tr class="status hide-while-loading" style="display:none;">
                 <th scope="row" valign="top"></th>
                 <td>
-                    <p class="status_message"></p>
+                    <div id="message">
+                        <p class="status_message"></p>
+                    </div>
+
                 </td>
             </tr>
             <tr>
@@ -83,16 +73,16 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                 <th scope="row" valign="top"><label for="email_template_body">Body</label></th>
                 <td>
                     <div id="template_editor_container">
-                        <?php //wp_editor('', 'blank'); ?>
 						<textarea rows="10" cols="80" name="email_template_body" id="email_template_body"></textarea>
                     </div>
                 </td>
             </tr>
-            <tr>
+            <tr class="controls hide-while-loading">
                 <th scope="row" valign="top"></th>
                 <td>
                     <p class="submit">
-                        <input id="submit_template_data" name="savesettings" type="submit" class="button-primary" value="Save Settings" />
+                        <input id="submit_template_data" name="save_template" type="button" class="button-primary" value="Save Template" />
+                        <input id="reset_template_data" name="reset_template" type="button" class="button" value="Reset Template" />
                     </p>
                 </td>
             </tr>
@@ -100,8 +90,8 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                 <th scope="row" valign="top"></th>
                 <td>
                     <h3>Variable Reference</h3>
-                    <div id="template_reference" style="overflow:scroll;height:250px;">
-                        <table class="striped">
+                    <div id="template_reference" style="overflow:scroll;height:250px;width:800px;;">
+                        <table class="widefat striped">
                             <tr><th colspan=2>General Settings / Membership Info </th></tr>
                             <tr><td>!!name!!</td><td> Display Name (Profile/Edit User > Display name publicly as)</td></tr>
                             <tr><td>!!user_login!!</td><td> Username</td</tr>

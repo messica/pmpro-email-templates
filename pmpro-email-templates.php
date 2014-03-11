@@ -4,7 +4,7 @@
  * Description: Define your own custom PMPro HTML Email Templates.
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
- * Version: .2
+ * Version: .3
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */

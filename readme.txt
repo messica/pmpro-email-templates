@@ -7,9 +7,10 @@ Tested up to: 3.8.1
 Stable tag: .3
 
 == Description ==
-This addon makes it easier to edit the PMPro email templates by copying and pasting your own HTML email files.
+Customize PMPro email templates right from the WordPress dashboard!
+Simply select an email template from the dropdown list, edit, and save!
 
-== Features: ==
+== Features ==
 * Edit email templates directly from the WordPress dashboard!
 * Imports existing email templates from paid-memberships-pro/email/ directory
 * Filter to handle all $data variables

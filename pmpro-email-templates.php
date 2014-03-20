@@ -177,12 +177,12 @@ function pmproet_email_data($data, $email) {
         $invoice->billing->phone);
 
     //membership change
-    if($user->membership_level->ID)
+    if(!empty($user->membership_level) && !empty($user->membership_level->ID))
        $data["membership_change"] = sprintf(__("The new level is %s.", "pmpro"), $user->membership_level->name);
     else
        $data["membership_change"] = __("Your membership has been cancelled", "pmpro");
 
-    if(!empty($user->membership_level->enddate))
+    if(!empty($user->membership_level) && !empty($user->membership_level->enddate))
         $data["membership_change"] .= ". " . sprintf(__("This membership will expire on %s", "pmpro"), date(get_option('date_format'), $user->membership_level->enddate));
 
     elseif(!empty($email->expiration_changed))
@@ -190,7 +190,7 @@ function pmproet_email_data($data, $email) {
 
     //membership expiration
     $data['membership_expiration'] = '';
-    if ($pmpro_user_meta->enddate)
+    if(!empty($pmpro_user_meta->enddate))
         $data['membership_expiration'] = "<p>" . sprintf(__("This membership will expire on %s.", "pmpro"), $pmpro_user_meta->enddate . "</p>\n");
 
     return $data;

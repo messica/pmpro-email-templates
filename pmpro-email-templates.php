@@ -4,7 +4,7 @@
  * Description: Define your own custom PMPro HTML Email Templates.
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
- * Version: .3
+ * Version: .4
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */
@@ -83,7 +83,7 @@ function pmproet_get_template_data() {
 
     echo json_encode($template_data);
 	
-    die();
+    exit;
 }
 add_action('wp_ajax_pmproet_get_template_data', 'pmproet_get_template_data');
 
@@ -94,7 +94,8 @@ function pmproet_save_template_data() {
     pmpro_setOption($_REQUEST['template'] . '_subject', $_REQUEST['subject']);
     pmpro_setOption($_REQUEST['template'] . '_body', $_REQUEST['body']);
     echo 'Template Saved';
-    die();
+    
+	exit;
 }
 add_action('wp_ajax_pmproet_save_template_data', 'pmproet_save_template_data');
 
@@ -112,7 +113,8 @@ function pmproet_reset_template_data() {
     $template_data['body'] = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $template) . '.html');
 
     echo json_encode($template_data);
-    die();
+    
+	exit;
 }
 add_action('wp_ajax_pmproet_reset_template_data', 'pmproet_reset_template_data');
 
@@ -126,6 +128,8 @@ function pmproet_email_filter($email) {
 
     if (pmpro_getOption('email_header_body'))
         $email->body = pmpro_getOption('email_header_body');
+	else
+		$email->body = "";
 
     if (pmpro_getOption('email_' . $email->template . '_body'))
         $email->body .= pmpro_getOption('email_' . $email->template . '_body');
@@ -154,71 +158,88 @@ function pmproet_email_data($data, $email) {
         $user = $current_user;
     $pmpro_user_meta = $wpdb->get_row("SELECT * FROM wp_pmpro_memberships_users WHERE user_id = '" . $user->ID . "' AND status='active'");
 
-    $invoice = new MemberOrder($data['invoice_id']);
-
-    $data = array(
-
-        //general data
-        "name" => $user->display_name,
-        "user_login" => $user->user_login,
-        "sitename" => get_option("blogname"),
-        "siteemail" => pmpro_getOption("from_email"),
-        "membership_id" => $data['membership_id'],
-        "membership_level_name" => $data['membership_level_name'],
-        "display_name" => $user->display_name,
-        "user_email" => $user->user_email,
-        "login_link" => pmpro_url("account"),
-        "levels_link" => pmpro_url("levels"),
-        "enddate" => date(get_option('date_format'), $user->membership_level->enddate),
-
-        //billing and checkout
-        "billing_name" => $invoice->billing->name,
-		"billing_street" => $invoice->billing->street,
-		"billing_city" => $invoice->billing->city,
-		"billing_state" => $invoice->billing->state,
-		"billing_zip" => $invoice->billing->zip,
-		"billing_country" => $invoice->billing->country,
-		"billing_phone" => $invoice->billing->phone,
-		"cardtype" => $invoice->cardtype,
-		"accountnumber" => hideCardNumber($invoice->accountnumber),
-		"expirationmonth" => $invoice->expirationmonth,
-		"expirationyear" => $invoice->expirationyear,
-        "membership_cost" => $data['membership_cost'],
-        "instructions" => wpautop(pmpro_getOption("instructions")),
-        "invoice_id" => $invoice->code,
-        "invoice_total" => $pmpro_currency_symbol . number_format($invoice->total, 2),
-        "invoice_date" => date(get_option('date_format'), $invoice->timestamp),
-        "discount_code" => $data['discount_code'],
-        "invoice_link" => pmpro_url("invoice", "?invoice=" . $invoice->code),
-    );
-
-    //billing address
-    $data["billing_address"] = pmpro_formatAddress($invoice->billing->name,
-        $invoice->billing->street,
-        "", //address 2
-        $invoice->billing->city,
-        $invoice->billing->state,
-        $invoice->billing->zip,
-        $invoice->billing->country,
-        $invoice->billing->phone);
+	//make sure data is an array
+	if(!is_array($data))
+		$data = array();
+	
+	//general data	
+    $new_data['sitename'] = get_option("blogname");
+	$new_data['siteemail'] = pmpro_getOption("from_email");
+	if(empty($new_data['login_link']))
+		$new_data['login_link'] = wp_login_url;
+	$new_data['levels_link'] = pmpro_url("levels");        
+	
+	//user data
+	if(!empty($user))
+	{
+		$new_data['name'] = $user->display_name;
+		$new_data['user_login'] = $user->user_login;
+		$new_data['display_name'] = $user->display_name;
+		$new_data['user_email'] = $user->user_email;
+	}
+	
+	//membership data
+	if(!empty($user->membership_level))
+		$new_data['enddate'] = date(get_option('date_format'), $user->membership_level->enddata);
+	
+	//invoice data
+	if(!empty($data['invoice_id']))
+	{
+	    $invoice = new MemberOrder($data['invoice_id']);
+		if(!empty($invoice))
+		{
+			$new_data['billing_name'] = $invoice->billing->name;
+			$new_data['billing_street'] = $invoice->billing->street;
+			$new_data['billing_city'] = $invoice->billing->city;
+			$new_data['billing_state'] = $invoice->billing->state;
+			$new_data['billing_zip'] = $invoice->billing->zip;
+			$new_data['billing_country'] = $invoice->billing->country;
+			$new_data['billing_phone'] = $invoice->billing->phone;
+			$new_data['cardtype'] = $invoice->cardtype;
+			$new_data['accountnumber'] = hideCardNumber($invoice->accountnumber);
+			$new_data['expirationmonth'] = $invoice->expirationmonth;
+			$new_data['expirationyear'] = $invoice->expirationyear;
+			$new_data['instructions'] = wpautop(pmpro_getOption('instructions'));
+			$new_data['invoice_id'] = $invoice->code;
+			$new_data['invoice_total'] = $pmpro_currency_symbol . number_format($invoice->total, 2);
+			$new_data['invoice_link'] = pmpro_url('invoice', '?invoice=' . $invoice->code);
+			
+			 //billing address
+			$new_data["billing_address"] = pmpro_formatAddress($invoice->billing->name,
+				$invoice->billing->street,
+				"", //address 2
+				$invoice->billing->city,
+				$invoice->billing->state,
+				$invoice->billing->zip,
+				$invoice->billing->country,
+				$invoice->billing->phone);
+		}
+	}        
 
     //membership change
     if(!empty($user->membership_level) && !empty($user->membership_level->ID))
-       $data["membership_change"] = sprintf(__("The new level is %s.", "pmpro"), $user->membership_level->name);
+       $new_data["membership_change"] = sprintf(__("The new level is %s.", "pmpro"), $user->membership_level->name);
     else
-       $data["membership_change"] = __("Your membership has been cancelled", "pmpro");
+       $new_data["membership_change"] = __("Your membership has been cancelled", "pmpro");
 
     if(!empty($user->membership_level) && !empty($user->membership_level->enddate))
-        $data["membership_change"] .= ". " . sprintf(__("This membership will expire on %s", "pmpro"), date(get_option('date_format'), $user->membership_level->enddate));
+        $new_data["membership_change"] .= ". " . sprintf(__("This membership will expire on %s", "pmpro"), date(get_option('date_format'), $user->membership_level->enddate));
 
     elseif(!empty($email->expiration_changed))
-        $data["membership_change"] .= ". " . __("This membership does not expire", "pmpro");
+        $new_data["membership_change"] .= ". " . __("This membership does not expire", "pmpro");
 
     //membership expiration
-    $data['membership_expiration'] = '';
+    $new_data['membership_expiration'] = '';
     if(!empty($pmpro_user_meta->enddate))
-        $data['membership_expiration'] = "<p>" . sprintf(__("This membership will expire on %s.", "pmpro"), $pmpro_user_meta->enddate . "</p>\n");
+        $new_data['membership_expiration'] = "<p>" . sprintf(__("This membership will expire on %s.", "pmpro"), $pmpro_user_meta->enddate . "</p>\n");
 
+	//now replace any new_data not already in data
+	foreach($new_data as $key => $value)
+	{
+		if(!isset($data[$key]))
+			$data[$key] = $value;
+	}
+		
     return $data;
 }
 add_filter('pmpro_email_data', 'pmproet_email_data', 10, 2);

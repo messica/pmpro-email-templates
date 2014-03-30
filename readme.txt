@@ -27,6 +27,7 @@ Simply select an email template from the dropdown list, edit, and save!
 == Changelog ==
 = .5 =
 * Fixed Subject bug
+* Submit button is now disabled instead of hidden when saving templates - it just looked weird.
 
 = .4 =
 * Fixed warnings when setting up $data array.

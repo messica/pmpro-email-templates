@@ -64,7 +64,8 @@ jQuery(document).ready(function($) {
 
     function saveTemplate() {
 
-        $(".controls").hide();
+//        $(".controls").hide();
+        $("#submit_template_data").attr("disabled", true);
         $(".status").hide();
 
         $data = {
@@ -80,7 +81,8 @@ jQuery(document).ready(function($) {
             else {
                 $("#message").addClass("error");
             }
-            $(".controls").show();
+//            $(".controls").show();
+            $("#submit_template_data").attr("disabled", false);
             $(".status_message").html(response);
             $(".status").show();
             $(".status_message").show();

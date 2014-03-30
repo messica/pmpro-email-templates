@@ -4,7 +4,8 @@
  * Description: Define your own custom PMPro HTML Email Templates.
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
- * Version: .4
+ * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
+ * Version: 0.5
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */

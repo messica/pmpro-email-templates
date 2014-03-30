@@ -123,7 +123,7 @@ add_action('wp_ajax_pmproet_reset_template_data', 'pmproet_reset_template_data')
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
 
-    if (pmpro_getOption($email->template . '_subject'))
+    if (pmpro_getOption('email_' . $email->template . '_subject'))
         $email->subject = pmpro_getOption('email_' . $email->template . '_subject');
 
     if (pmpro_getOption('email_header_body'))

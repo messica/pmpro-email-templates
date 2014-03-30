@@ -1,6 +1,6 @@
-=== Paid Memberships Pro Addon - Email Templates ===
+=== PMPro Email Templates ===
 
-Contributors: strangerstudios, jessica o
+Contributors: strangerstudios, messica
 Tags: pmpro, email, templates, customize, member, membership, subscription, addon
 Requires at least: 3.5
 Tested up to: 3.8.1
@@ -25,6 +25,9 @@ Simply select an email template from the dropdown list, edit, and save!
   * Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-email-templates/issues
 
 == Changelog ==
+= .5 =
+* Fixed Subject bug
+
 = .4 =
 * Fixed warnings when setting up $data array.
 * Fixed issue where emails were getting double content.

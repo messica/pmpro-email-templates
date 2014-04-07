@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: 0.5
+ * Version: .5.1
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */
@@ -124,19 +124,31 @@ add_action('wp_ajax_pmproet_reset_template_data', 'pmproet_reset_template_data')
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
 
-    if (pmpro_getOption('email_' . $email->template . '_subject'))
-        $email->subject = pmpro_getOption('email_' . $email->template . '_subject');
+    $et_subject = pmpro_getOption('email_' . $email->template . '_subject');
+    $et_header = pmpro_getOption('email_header_body');
+    $et_body = pmpro_getOption('email_' . $email->template . '_body');
+    $et_footer = pmpro_getOption('email_footer_body');
+    $default_body = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $email->template) . '.html');
 
-    if (pmpro_getOption('email_header_body'))
-        $email->body = pmpro_getOption('email_header_body');
-	else
-		$email->body = "";
+    if($et_subject)
+        $email->subject = $et_subject;
 
-    if (pmpro_getOption('email_' . $email->template . '_body'))
-        $email->body .= pmpro_getOption('email_' . $email->template . '_body');
+    if($et_header)
+        $temp_body = $et_header;
+    else
+        $temp_body = file_get_contents( PMPRO_DIR . '/email/header.html');
 
-    if (pmpro_getOption('email_footer_body'))
-        $email->body .= pmpro_getOption('email_footer_body');
+    if($et_body)
+        $temp_body .= $et_body;
+    else
+        $temp_body .= $default_body;
+
+    if($et_footer)
+        $temp_body .= $et_footer;
+    else
+        $temp_body .= file_get_contents( PMPRO_DIR . '/emails/footer.html');
+
+    $email->body = $temp_body;
 
     //replace data
     foreach($email->data as $key => $value)

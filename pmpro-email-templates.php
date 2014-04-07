@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: .5.1
+ * Version: .5.1.1
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */
@@ -128,7 +128,13 @@ function pmproet_email_filter($email) {
     $et_header = pmpro_getOption('email_header_body');
     $et_body = pmpro_getOption('email_' . $email->template . '_body');
     $et_footer = pmpro_getOption('email_footer_body');
-    $default_body = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $email->template) . '.html');
+
+    if(file_exists( PMPRO_DIR . '/email/' . str_replace('email_', '', $email->template) . '.html')) {
+        $default_body = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $email->template) . '.html');
+    }
+    else {
+        $default_body = $email->body;
+    }
 
     if($et_subject)
         $email->subject = $et_subject;
@@ -146,7 +152,7 @@ function pmproet_email_filter($email) {
     if($et_footer)
         $temp_body .= $et_footer;
     else
-        $temp_body .= file_get_contents( PMPRO_DIR . '/emails/footer.html');
+        $temp_body .= file_get_contents( PMPRO_DIR . '/email/footer.html');
 
     $email->body = $temp_body;
 

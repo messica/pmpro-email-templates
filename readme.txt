@@ -4,7 +4,7 @@ Contributors: strangerstudios, messica
 Tags: pmpro, email, templates, customize, member, membership, subscription, addon
 Requires at least: 3.5
 Tested up to: 3.8.1
-Stable tag: .5.1
+Stable tag: .5.1.1
 
 == Description ==
 Customize PMPro email templates right from the WordPress dashboard!

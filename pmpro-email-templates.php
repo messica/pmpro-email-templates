@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: .5.1.1
+ * Version: .5.1.2
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */

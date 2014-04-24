@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: .5.1.2
+ * Version: .5.1.3
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */
@@ -175,7 +175,7 @@ function pmproet_email_data($data, $email) {
     $user = get_user_by('login', $data['user_login']);
     if(!$user)
         $user = $current_user;
-    $pmpro_user_meta = $wpdb->get_row("SELECT * FROM wp_pmpro_memberships_users WHERE user_id = '" . $user->ID . "' AND status='active'");
+    $pmpro_user_meta = $wpdb->get_row("SELECT * FROM $wpdb->pmpro_memberships_users WHERE user_id = '" . $user->ID . "' AND status='active'");
 
 	//make sure data is an array
 	if(!is_array($data))

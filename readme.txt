@@ -3,8 +3,8 @@
 Contributors: strangerstudios, messica
 Tags: pmpro, email, templates, customize, member, membership, subscription, addon
 Requires at least: 3.5
-Tested up to: 3.8.1
-Stable tag: .5.1.2
+Tested up to: 3.9
+Stable tag: .5.1.3
 
 == Description ==
 Customize PMPro email templates right from the WordPress dashboard!
@@ -25,6 +25,8 @@ Simply select an email template from the dropdown list, edit, and save!
   * Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-email-templates/issues
 
 == Changelog ==
+= .5.1.3 =
+* Fixed issue with database table name
 
 = .5.1.2 =
 * Hotfix: WordPress repo trunk was missing files

@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
         $.post(ajaxurl, $data, function(response) {
 
             var template_data = JSON.parse(response);
-			
+
 			$("#pmproet-spinner").hide();
             $(".controls").show();
             $(".hide-while-loading").show();

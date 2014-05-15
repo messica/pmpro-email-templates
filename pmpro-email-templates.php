@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: .5.1.3
+ * Version: .5.1.4
  */
 
 /* Email Template Default Subjects (body is read from template files in /email/ ) */
@@ -92,8 +92,8 @@ add_action('wp_ajax_pmproet_get_template_data', 'pmproet_get_template_data');
 function pmproet_save_template_data() {
 
     //update this template's settings
-    pmpro_setOption($_REQUEST['template'] . '_subject', $_REQUEST['subject']);
-    pmpro_setOption($_REQUEST['template'] . '_body', $_REQUEST['body']);
+    pmpro_setOption($_REQUEST['template'] . '_subject', stripslashes($_REQUEST['subject']));
+    pmpro_setOption($_REQUEST['template'] . '_body', stripslashes($_REQUEST['body']));
     echo 'Template Saved';
     
 	exit;

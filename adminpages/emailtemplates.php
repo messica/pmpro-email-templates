@@ -59,8 +59,15 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                         <option value="email_membership_expiring">Membership Expiring</option>
                         <option value="email_trial_ending">Trial Ending</option>
                     </select>
-                    <img src="<?php echo admin_url(); ?>/images/wpspin_light.gif" id="pmproet-spinner" style="display:none;" />
+                    <img src="<?php echo admin_url('images/wpspin_light.gif'); ?>" id="pmproet-spinner" style="display:none;" />
                     <hr>
+                </td>
+            </tr>
+            <tr class="hide-while-loading">
+                <th scope="row" valign="top"></th>
+                <td>
+                    <label><input id="email_template_disable" name="email_template_disable" type="checkbox"/><span id="disable_label">Disable this email?</span></label>
+                    <p id="disable_description" class="description small">Emails with this template will not be sent.</p>
                 </td>
             </tr>
             <tr class="hide-while-loading">

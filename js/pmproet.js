@@ -1,9 +1,11 @@
 jQuery(document).ready(function($) {
 
     /* Variables */
+
+    var template, disabled, $subject, $editor;
+
     $subject = $("#email_template_subject").closest("tr");
     $editor = $("#wp-email_template_body-wrap");
-    var template;
 
     $(".hide-while-loading").hide();
     $(".controls").hide();
@@ -11,12 +13,13 @@ jQuery(document).ready(function($) {
 
     /* PMPro Email Template Switcher */
     $("#pmpro_email_template_switcher").change(function() {
+        
         $(".status_message").hide();
         template = $(this).val();
-
-        if (template) {
-            templateSwitcher(template);
-        }
+        
+        //get template data
+        if (template)
+            getTemplate(template);
         else {
             $(".hide-while-loading").hide();
             $(".controls").hide();
@@ -31,9 +34,14 @@ jQuery(document).ready(function($) {
         resetTemplate();
     });
 
-    /* Functions */
-    function templateSwitcher(template) {
+    $("#email_template_disable").click(function(e) {
+        disableTemplate();
+    });
 
+    /* Functions */
+    function getTemplate(template) {
+
+        //hide stuff and show ajax spinner
         $(".hide-while-loading").hide();
         $("#pmproet-spinner").show();
 
@@ -47,18 +55,36 @@ jQuery(document).ready(function($) {
 
             var template_data = JSON.parse(response);
 
+            //show/hide stuff
 			$("#pmproet-spinner").hide();
             $(".controls").show();
             $(".hide-while-loading").show();
             $(".status").hide();
 
-            if (template == 'email_header' || template === 'email_footer')
+            //change disable text
+            if (template == 'email_header' || template === 'email_footer') {
+
                 $subject.hide();
-			
-            // set values
+                if(template == 'email_header')
+                    $("#disable_label").text("Disable email header for all PMPro emails?");
+                else
+                    $("#disable_label").text("Disable email footer for all PMPro emails?");
+
+                //hide description
+                $("#disable_description").hide();
+            }
+            else {
+                $("#disable_label").text("Disable this email?");
+                $("#disable_description").show().text("PMPro emails with this template will not be sent.");
+            }
+
+            // populate subject and body
 			$('#email_template_subject').val(template_data['subject']);
 			$('#email_template_body').val(template_data['body']);
 
+            // disable form
+            disabled = template_data['disabled'];
+            toggleFormDisabled(disabled);
         });
     }
 
@@ -81,7 +107,6 @@ jQuery(document).ready(function($) {
             else {
                 $("#message").addClass("error");
             }
-//            $(".controls").show();
             $("#submit_template_data").attr("disabled", false);
             $(".status_message").html(response);
             $(".status").show();
@@ -104,6 +129,63 @@ jQuery(document).ready(function($) {
             $('#email_template_subject').val(template_data['subject']);
             $('#email_template_body').val(template_data['body']);
         });
+
+        return true;
+    }
+
+    function disableTemplate() {
+
+        //update wp_options
+        data = {
+            template: template,
+            action: 'pmproet_disable_template',
+            disabled: $("#email_template_disable").is(":checked")
+        };
+
+        $.post(ajaxurl, data, function(response) {
+
+            response = JSON.parse(response);
+
+            //failure
+            if(response['result'] == false) {
+                $("#message").addClass("error");
+                $(".status_message").show().text("There was an error updating your template settings.");
+            }
+            else {
+                if(response['status'] == 'true') {
+                    $("#message").addClass("updated");
+                    $(".status_message").show().text("Template Disabled");
+                }
+                else {
+                    $("#message").addClass("updated");
+                    $(".status_message").show().text("Template Enabled");
+                }
+            }
+
+            $(".hide-while-loading").show();
+
+            disabled = response['status'];
+
+            toggleFormDisabled(disabled);
+        });
+
+    }
+
+    function toggleFormDisabled(disabled) {
+
+        if(disabled == 'true') {
+            $("#email_template_disable").attr('checked', true);
+            $("#email_template_body").attr('readonly', 'readonly').attr('disabled', 'disabled');
+            $("#email_template_subject").attr('readonly', 'readonly').attr('disabled', 'disabled');
+            $(".controls").hide();
+        }
+        else {
+            $("#email_template_disable").attr('checked', false);
+            $("#email_template_body").removeAttr('readonly','readonly').removeAttr('disabled', 'disabled');
+            $("#email_template_subject").removeAttr('readonly','readonly').removeAttr('disabled', 'disabled');
+            $(".controls").show();
+        }
+
     }
 
 });

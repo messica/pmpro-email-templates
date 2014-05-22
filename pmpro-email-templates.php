@@ -72,6 +72,7 @@ function pmproet_get_template_data() {
     //get template data
     $template_data['body'] = pmpro_getOption($template . '_body');
     $template_data['subject'] = pmpro_getOption($template . '_subject');
+    $template_data['disabled'] = pmpro_getOption($template . '_disabled');
 
     if (empty($template_data['body'])) {
         //if not found, get template from PMPro email templates
@@ -119,10 +120,24 @@ function pmproet_reset_template_data() {
 }
 add_action('wp_ajax_pmproet_reset_template_data', 'pmproet_reset_template_data');
 
+// disable template
+function pmproet_disable_template() {
+    $template = $_REQUEST['template'];
+    $response['result'] = update_option('pmpro_' . $template . '_disabled', $_REQUEST['disabled']);
+    $response['status'] = $_REQUEST['disabled'];
+    echo json_encode($response);
+	exit;
+}
+add_action('wp_ajax_pmproet_disable_template', 'pmproet_disable_template');
+
 
 
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
+    
+    //is this email disabled?
+    if(pmpro_getOption('email_' . $email->template . '_disabled') == 'true')
+        return false;
 
     $et_subject = pmpro_getOption('email_' . $email->template . '_subject');
     $et_header = pmpro_getOption('email_header_body');
@@ -139,22 +154,28 @@ function pmproet_email_filter($email) {
     if($et_subject)
         $email->subject = $et_subject;
 
-    if($et_header)
-        $temp_body = $et_header;
-    else
-        $temp_body = file_get_contents( PMPRO_DIR . '/email/header.html');
+    //is header disabled?
+    if(pmpro_getOption('email_header_disabled') != 'true') {
+        if($et_header)
+            $temp_content = $et_header;
+        else
+            $temp_content = file_get_contents( PMPRO_DIR . '/email/header.html');
+    }
 
     if($et_body)
-        $temp_body .= $et_body;
+        $temp_content .= $et_body;
     else
-        $temp_body .= $default_body;
+        $temp_content .= $default_body;
 
-    if($et_footer)
-        $temp_body .= $et_footer;
-    else
-        $temp_body .= file_get_contents( PMPRO_DIR . '/email/footer.html');
-
-    $email->body = $temp_body;
+    //is footer disabled?
+    if(pmpro_getOption('email_footer_disabled') != 'true') {
+        if($et_footer)
+            $temp_content .= $et_footer;
+        else
+            $temp_content .= file_get_contents( PMPRO_DIR . '/email/footer.html');
+    }
+    
+    $email->body = $temp_content;
 
     //replace data
     foreach($email->data as $key => $value)

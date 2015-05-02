@@ -38,6 +38,10 @@ jQuery(document).ready(function($) {
         disableTemplate();
     });
 
+    $("#send_test_email").click(function(e) {
+        sendTestEmail();
+    });
+
     /* Functions */
     function getTemplate(template) {
 
@@ -168,7 +172,36 @@ jQuery(document).ready(function($) {
 
             toggleFormDisabled(disabled);
         });
+    }
 
+    function sendTestEmail() {
+
+        //hide stuff and show ajax spinner
+        $(".hide-while-loading").hide();
+        $("#pmproet-spinner").show();
+
+        data = {
+            template: template,
+            email: $("#test_email_address").val(),
+            action: 'pmproet_send_test'
+        };
+
+        $.post(ajaxurl, data, function(success) {
+            //show/hide stuff
+            $("#pmproet-spinner").hide();
+            $(".controls").show();
+            $(".hide-while-loading").show();
+
+            if(success) {
+                $("#message").addClass("updated").removeClass("error");
+                $(".status_message").show().text("Test e-mail sent successfully.");
+            }
+            else {
+                $("#message").addClass("error").removeClass("updated");
+                $(".status_message").show().text("Test e-mail failed.");
+            }
+
+        })
     }
 
     function toggleFormDisabled(disabled) {

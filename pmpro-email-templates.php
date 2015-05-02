@@ -8,37 +8,14 @@
  * Version: .5.3
  */
 
-/* Email Template Default Subjects (body is read from template files in /email/ ) */
-global $pmproet_email_defaults;
-$pmproet_email_defaults = array(
-    'email_default' => __("An Email From !!sitename!!", "pmpro"),
-    'email_admin_change' => __("Your membership at !!sitename!! has been changed", "pmpro"),
-    'email_admin_change_admin' => __("Membership for !!user_login!! at !!sitename!! has been changed", "pmpro"),
-    'email_billing' => __("Your billing information has been udpated at !!sitename!!", "pmpro"),
-    'email_billing_admin' => __("Billing information has been udpated for !!user_login!! at !!sitename!!", "pmpro"),
-    'email_billing_failure' => __("Membership Payment Failed at !!sitename!!", "pmpro"),
-    'email_billing_failure_admin' => __("Membership Payment Failed For !!display_name!! at !!sitename!!", "pmpro"),
-    'email_cancel' => __("Your membership at !!sitename!! has been CANCELLED", "pmpro"),
-    'email_cancel_admin' => __("Membership for !!user_login!! at !!sitename!! has been CANCELLED", "pmpro"),
-    'email_checkout_check' => __("Your membership confirmation for !!sitename!!", "pmpro"),
-    'email_checkout_check_admin' => __("Member Checkout for !!membership_level_name!! at !!sitename!!", "pmpro"),
-    'email_checkout_express' => __("Your membership confirmation for !!sitename!!", "pmpro"),
-    'email_checkout_express_admin' => __("Member Checkout for !!membership_level_name!! at !!sitename!!", "pmpro"),
-    'email_checkout_free' => __("Your membership confirmation for !!sitename!!", "pmpro"),
-    'email_checkout_free_admin' => __("Member Checkout for !!membership_level_name!! at !!sitename!!", "pmpro"),
-    'email_checkout_freetrial' => __("Your membership confirmation for !!sitename!!", "pmpro"),
-    'email_checkout_freetrial_admin' => __("Member Checkout for !!membership_level_name!! at !!sitename!!", "pmpro"),
-    'email_checkout_paid' => __("Your membership confirmation for !!sitename!!", "pmpro"),
-    'email_checkout_paid_admin' => __("Member Checkout for !!membership_level_name!! at !!sitename!!", "pmpro"),
-    'email_checkout_trial' => __("Your membership confirmation for !!sitename!!", "pmpro"),
-    'email_checkout_trial_admin' => __("Member Checkout for !!membership_level_name!! at !!sitename!!", "pmpro"),
-    'email_credit_card_expiring' => __("Credit Card on File Expiring Soon at !!sitename!!", "pmpro"),
-    'email_invoice' => __("INVOICE for !!sitename!! membership", "pmpro"),
-    'email_membership_expired' => __("Your membership at !!sitename!! has ended", "pmpro"),
-    'email_membership_expiring' => __("Your membership at !!sitename!! will end soon", "pmpro"),
-    'email_trial_ending' => __("Your trial at !!sitename!! is ending soon", "pmpro"),
-);
+/*
+ * Includes
+ */
+require_once(dirname(__FILE__) . '/includes/init.php');
 
+/*
+ * Setup admin pages
+ */
 function pmproet_setup() {
     add_submenu_page('pmpro-membershiplevels', __('Email Templates', 'pmpro'), __('Email Templates', 'pmpro'), 'manage_options', 'pmpro-email-templates', 'pmproet_admin_page');
 }
@@ -130,7 +107,100 @@ function pmproet_disable_template() {
 }
 add_action('wp_ajax_pmproet_disable_template', 'pmproet_disable_template');
 
+//send test email
+function pmproet_send_test() {
 
+    global $pmproet_test_order_id, $current_user;
+
+    //setup test email
+    $test_email = new PMProEmail();
+    $test_email->to = $_REQUEST['email'];
+    $test_email->template = str_replace('email_', '', $_REQUEST['template']);
+
+    //load test order
+    $pmproet_test_order_id = get_option('pmproet_test_order_id');
+    $test_order = new MemberOrder($pmproet_test_order_id);
+
+    //add notice to email body
+    add_filter('pmpro_email_body', 'pmproet_test_email_body');
+
+    //figure out how to send the email
+    switch($test_email->template) {
+        case 'cancel':
+            $send_email = 'sendCancelEmail';
+            $params = array($current_user);
+            break;
+        case 'cancel_admin':
+            $send_email = 'sendCancelAdminEmail';
+            $params = array($current_user, $current_user->membership_level->id);
+            break;
+        case 'checkout_check':
+        case 'checkout_express':
+        case 'checkout_free':
+        case 'checkout_freetrial':
+        case 'checkout_paid':
+        case 'checkout_trial':
+            $send_email = 'sendCheckoutEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'checkout_check_admin':
+        case 'checkout_express_admin':
+        case 'checkout_free_admin':
+        case 'checkout_freetrial_admin':
+        case 'checkout_paid_admin':
+        case 'checkout_trial_admin':
+            $send_email = 'sendCheckoutAdminEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'billing':
+            $send_email = 'sendBillingEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'billing_admin':
+            $send_email = 'sendBillingAdminEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'billing_failure':
+            $send_email = 'sendBillingFailureEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'billing_failure_admin':
+            $send_email = 'sendBillingFailureAdminEmail';
+            $params = array($current_user->user_email, $test_order);
+            break;
+        case 'credit_card_expiring':
+            $send_email = 'sendCreditCardExpiringEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'invoice':
+            $send_email = 'sendInvoiceEmail';
+            $params = array($current_user, $test_order);
+            break;
+        case 'trial_ending':
+            $send_email = 'sendTrialEndingEmail';
+            $params = array($current_user);
+            break;
+        case 'membership_expired';
+            $send_email = 'sendMembershipExpiredEmail';
+            $params = array($current_user);
+            break;
+        case 'membership_expiring';
+            $send_email = 'sendMembershipExpiringEmail';
+            $params = array($current_user);
+            break;
+        default:
+            $send_email = 'sendEmail';
+            $params = array();
+    }
+
+    //send the email
+    $response = call_user_func_array(array($test_email, $send_email), $params);
+
+    //return the response
+    echo $response;
+    exit;
+}
+add_action('wp_ajax_pmproet_send_test', 'pmproet_send_test');
 
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
@@ -187,6 +257,12 @@ function pmproet_email_filter($email) {
     return $email;
 }
 add_filter('pmpro_email_filter', 'pmproet_email_filter');
+
+//for test emails
+function pmproet_test_email_body($body, $email) {
+    $body .= '<br><br><b>--- ' . __('THIS IS A TEST EMAIL', 'pmpro') . ' --</b>';
+    return $body;
+}
 
 /* Filter for Variables */
 function pmproet_email_data($data, $email) {

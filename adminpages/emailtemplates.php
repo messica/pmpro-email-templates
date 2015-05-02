@@ -5,7 +5,8 @@ if(!function_exists("current_user_can") || (!current_user_can("manage_options") 
     die(__("You do not have permissions to perform this action.", "pmpro"));
 }
 
-global $wpdb, $msg, $msgt, $pmproet_email_defaults;
+global $pmproet_test_order_id, $wpdb, $msg, $msgt, $pmproet_email_defaults, $current_user;
+$pmproet_test_order_id = get_option('pmproet_test_order_id');
 
 require_once(PMPRO_DIR . "/adminpages/admin_header.php");
 ?>
@@ -87,6 +88,18 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
             <tr class="controls hide-while-loading">
                 <th scope="row" valign="top"></th>
                 <td>
+                    <?php _e('Send a test email to ', 'pmpro'); ?>
+                    <input id="test_email_address" name="test_email_address" type="text" value="<?php echo $current_user->user_email; ?>"/>
+                    <input id="send_test_email" class="button" name="send_test_email" value="Send" type="button"/>
+                    <p class="description">
+                        <a href="<?php echo add_query_arg(array('page'=>'pmpro-orders', 'order'=>$pmproet_test_order_id), admin_url('admin.php')); ?>" target="_blank"><?php _e('Click here to edit the order used for test emails.', 'pmpro'); ?></a>
+                        <?php _e('Your current membership will be used for any membership level data.', 'pmpro'); ?>
+                    </p>
+                </td>
+            </tr>
+            <tr class="controls hide-while-loading">
+                <th scope="row" valign="top"></th>
+                <td>
                     <p class="submit">
                         <input id="submit_template_data" name="save_template" type="button" class="button-primary" value="Save Template" />
                         <input id="reset_template_data" name="reset_template" type="button" class="button" value="Reset Template" />
@@ -103,7 +116,7 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                             <tr><td>!!name!!</td><td> Display Name (Profile/Edit User > Display name publicly as)</td></tr>
                             <tr><td>!!user_login!!</td><td> Username</td</tr>
                             <tr><td>!!sitename!!</td><td> Site Title</td</tr>
-                            <tr><td>!!siteemail!!</td><td> Site E-mail Address (General Settings > Email OR Memberships > Email Settings)</td</tr>
+                            <tr><td>!!siteemail!!</td><td> Site Email Address (General Settings > Email OR Memberships > Email Settings)</td</tr>
                             <tr><td>!!membership_id!!</td><td> Membership Level ID</td</tr>
                             <tr><td>!!membership_level_name!!</td><td> Membership Level Name</td</tr>
                             <tr><td>!!membership_change!!</td><td> Membership Level Change</td</tr>

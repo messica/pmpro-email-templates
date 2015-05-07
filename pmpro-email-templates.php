@@ -116,7 +116,7 @@ function pmproet_send_test() {
     $test_email = new PMProEmail();
     $test_email->to = $_REQUEST['email'];
     $test_email->template = str_replace('email_', '', $_REQUEST['template']);
-
+		
     //load test order
     $pmproet_test_order_id = get_option('pmproet_test_order_id');
     $test_order = new MemberOrder($pmproet_test_order_id);

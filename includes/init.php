@@ -27,9 +27,9 @@ function pmproet_admin_init_test_order()
 		$test_order->user_id = $current_user->ID;	
 		$test_order->cardtype = "Visa";
 		$test_order->accountnumber = "4111111111111111";
-		$test_order->expirationmonth = date('m', current_time('timestamp'));
-		$test_order->expirationyear = date('m', current_time('timestamp'));
+		$test_order->expirationmonth = date('m', current_time('timestamp'));		
 		$test_order->expirationyear = (intval(date('Y', current_time('timestamp')))+1);
+		$test_order->ExpirationDate = $test_order->expirationmonth . $test_order->expirationyear;
 		$test_order->CVV2 = '123';									
 		$test_order->FirstName = 'Jane';
 		$test_order->LastName = 'Doe';

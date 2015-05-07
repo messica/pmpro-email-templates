@@ -1,12 +1,11 @@
 jQuery(document).ready(function($) {
-
-    /* Variables */
-
-    var template, disabled, $subject, $editor;
-
-    $subject = $("#email_template_subject").closest("tr");
-    $editor = $("#wp-email_template_body-wrap");
-
+    
+	/* Variables */
+	var template, disabled, $subject, $editor, $testemail;
+	$subject = $("#email_template_subject").closest("tr");
+	$editor = $("#wp-email_template_body-wrap");
+	$testemail = $("#test_email_address").closest("tr");
+	
     $(".hide-while-loading").hide();
     $(".controls").hide();
     $(".striped tr:even").css('background-color','#efefef');
@@ -38,14 +37,14 @@ jQuery(document).ready(function($) {
         disableTemplate();
     });
 
-    $("#send_test_email").click(function(e) {
-        sendTestEmail();
+    $("#send_test_email").click(function(e) {       
+		saveTemplate().done(setTimeout(function(){sendTestEmail();}, '1000'));
     });
 
     /* Functions */
-    function getTemplate(template) {
-
-        //hide stuff and show ajax spinner
+    function getTemplate(template) {        
+				
+		//hide stuff and show ajax spinner
         $(".hide-while-loading").hide();
         $("#pmproet-spinner").show();
 
@@ -69,6 +68,8 @@ jQuery(document).ready(function($) {
             if (template == 'email_header' || template === 'email_footer') {
 
                 $subject.hide();
+				$testemail.hide();
+				
                 if(template == 'email_header')
                     $("#disable_label").text("Disable email header for all PMPro emails?");
                 else
@@ -78,7 +79,8 @@ jQuery(document).ready(function($) {
                 $("#disable_description").hide();
             }
             else {
-                $("#disable_label").text("Disable this email?");
+                $testemail.show();
+				$("#disable_label").text("Disable this email?");
                 $("#disable_description").show().text("PMPro emails with this template will not be sent.");
             }
 
@@ -116,6 +118,8 @@ jQuery(document).ready(function($) {
             $(".status").show();
             $(".status_message").show();
         });
+
+		return $.Deferred().resolve();
     }
 
     function resetTemplate() {
@@ -182,7 +186,7 @@ jQuery(document).ready(function($) {
 
         data = {
             template: template,
-            email: $("#test_email_address").val(),
+            email: $("#test_email_address").val(),			
             action: 'pmproet_send_test'
         };
 

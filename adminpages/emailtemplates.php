@@ -85,12 +85,12 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                     </div>
                 </td>
             </tr>
-            <tr class="controls hide-while-loading">
+            <tr class="hide-while-loading">
                 <th scope="row" valign="top"></th>
                 <td>
                     <?php _e('Send a test email to ', 'pmpro'); ?>
                     <input id="test_email_address" name="test_email_address" type="text" value="<?php echo $current_user->user_email; ?>"/>
-                    <input id="send_test_email" class="button" name="send_test_email" value="Send" type="button"/>
+                    <input id="send_test_email" class="button" name="send_test_email" value="Save Template and Send Email" type="button"/>
                     <p class="description">
                         <a href="<?php echo add_query_arg(array('page'=>'pmpro-orders', 'order'=>$pmproet_test_order_id), admin_url('admin.php')); ?>" target="_blank"><?php _e('Click here to edit the order used for test emails.', 'pmpro'); ?></a>
                         <?php _e('Your current membership will be used for any membership level data.', 'pmpro'); ?>

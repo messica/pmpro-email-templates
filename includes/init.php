@@ -9,6 +9,10 @@ function pmproet_admin_init_test_order()
 {
 	global $current_user, $pmproet_test_order_id;
 
+	//make sure PMPro is activated
+	if(!class_exists('MemberOrder'))
+		return;
+	
 	$pmproet_test_order_id = get_option('pmproet_test_order_id');
 	$test_order = new MemberOrder($pmproet_test_order_id);
 	if(empty($test_order->id)) {

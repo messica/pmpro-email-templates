@@ -4,7 +4,7 @@ Contributors: strangerstudios, messica
 Tags: pmpro, paid memberships pro, email, templates, customize, member, membership, subscription, addon
 Requires at least: 3.5
 Tested up to: 4.2.2
-Stable tag: .5.4
+Stable tag: .5.4.1
 
 == Description ==
 Customize PMPro email templates right from the WordPress dashboard!
@@ -30,6 +30,9 @@ Simply select an email template from the dropdown list, edit, and save!
 1. The Email Templates admin page: Select the template to edit. Includes a list of template tags to include in your message body.
 
 == Changelog ==
+= .5.4.1 =
+* BUG: Fixed issue where plugin would fail if the MemberOrder class was not yet loaded (i.e. PMPro is inactive).
+
 = .5.4 =
 * ENAHANCEMENT: Added test email feature
 

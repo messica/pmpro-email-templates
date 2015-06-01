@@ -30,6 +30,9 @@ Simply select an email template from the dropdown list, edit, and save!
 1. The Email Templates admin page: Select the template to edit. Includes a list of template tags to include in your message body.
 
 == Changelog ==
+= .5.4.2 =
+* BUG: Now forcing the selected template for test emails.
+
 = .5.4.1 =
 * BUG: Fixed issue where plugin would fail if the MemberOrder class was not yet loaded (i.e. PMPro is inactive).
 

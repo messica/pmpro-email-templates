@@ -204,7 +204,11 @@ add_action('wp_ajax_pmproet_send_test', 'pmproet_send_test');
 
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
-    
+
+    //if we're sending a test email, force the template
+    if(!empty($_REQUEST['template']))
+        $email->template = str_replace('email_', '', $_REQUEST['template']);
+
     //is this email disabled?
     if(pmpro_getOption('email_' . $email->template . '_disabled') == 'true')
         return false;
@@ -213,6 +217,7 @@ function pmproet_email_filter($email) {
     $et_header = pmpro_getOption('email_header_body');
     $et_body = pmpro_getOption('email_' . $email->template . '_body');
     $et_footer = pmpro_getOption('email_footer_body');
+
 
     if(file_exists( PMPRO_DIR . '/email/' . str_replace('email_', '', $email->template) . '.html')) {
         $default_body = file_get_contents( PMPRO_DIR . '/email/' . str_replace('email_', '', $email->template) . '.html');

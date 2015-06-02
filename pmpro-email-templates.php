@@ -124,6 +124,9 @@ function pmproet_send_test() {
     //add notice to email body
     add_filter('pmpro_email_body', 'pmproet_test_email_body');
 
+    //force the template
+    add_filter('pmpro_email_filter', 'pmproet_test_email_template', 5);
+
     //figure out how to send the email
     switch($test_email->template) {
         case 'cancel':
@@ -205,10 +208,6 @@ add_action('wp_ajax_pmproet_send_test', 'pmproet_send_test');
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {
 
-    //if we're sending a test email, force the template
-    if(!empty($_REQUEST['template']))
-        $email->template = str_replace('email_', '', $_REQUEST['template']);
-
     //is this email disabled?
     if(pmpro_getOption('email_' . $email->template . '_disabled') == 'true')
         return false;
@@ -267,6 +266,13 @@ add_filter('pmpro_email_filter', 'pmproet_email_filter');
 function pmproet_test_email_body($body, $email) {
     $body .= '<br><br><b>--- ' . __('THIS IS A TEST EMAIL', 'pmpro') . ' --</b>';
     return $body;
+}
+function pmproet_test_email_template($email)
+{
+    if(!empty($_REQUEST['template']))
+        $email->template = str_replace('email_', '', $_REQUEST['template']);
+
+    return $email;
 }
 
 /* Filter for Variables */

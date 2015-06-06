@@ -116,7 +116,10 @@ function pmproet_send_test() {
     $test_email = new PMProEmail();
     $test_email->to = $_REQUEST['email'];
     $test_email->template = str_replace('email_', '', $_REQUEST['template']);
-		
+	
+	//add filter to change recipient
+	add_filter('pmpro_email_recipient', 'pmproet_test_pmpro_email_recipient');
+	
     //load test order
     $pmproet_test_order_id = get_option('pmproet_test_order_id');
     $test_order = new MemberOrder($pmproet_test_order_id);
@@ -204,6 +207,13 @@ function pmproet_send_test() {
     exit;
 }
 add_action('wp_ajax_pmproet_send_test', 'pmproet_send_test');
+
+function pmproet_test_pmpro_email_recipient($email)
+{
+	if(!empty($_REQUEST['email']))
+		$email = $_REQUEST['email'];
+	return $email;
+}
 
 /* Filter Subject and Body */
 function pmproet_email_filter($email) {

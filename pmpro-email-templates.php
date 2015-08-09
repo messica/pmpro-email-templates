@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: .5.4.2
+ * Version: .5.5
  */
 
 /*
@@ -370,6 +370,30 @@ function pmproet_email_data($data, $email) {
     $new_data['membership_expiration'] = '';
     if(!empty($pmpro_user_meta->enddate))
         $new_data['membership_expiration'] = "<p>" . sprintf(__("This membership will expire on %s.", "pmpro"), $pmpro_user_meta->enddate . "</p>\n");
+
+    //if others are used in the email look in usermeta
+    $et_body = pmpro_getOption('email_' . $email->template . '_body');
+    $templates_in_email = preg_match_all("/!!([^!]+)!!/", $et_body, $matches);
+    if(!empty($templates_in_email))
+    {
+    	$matches = $matches[1];
+    	foreach($matches as $match)
+    	{
+    		if(empty($new_data[$match]))
+    		{
+    			$usermeta = get_user_meta($user->ID, $match, true);
+    			if(!empty($usermeta))
+    			{
+    				if(is_array($usermeta) && !empty($usermeta['fullurl']))
+						$new_data[$match] = $usermeta['fullurl'];
+					elseif(is_array($usermeta))
+						$new_data[$match] = implode(", ", $usermeta);					
+					else
+						$new_data[$match] = $usermeta;
+    			}
+    		}
+    	}
+    }
 
 	//now replace any new_data not already in data
 	foreach($new_data as $key => $value)

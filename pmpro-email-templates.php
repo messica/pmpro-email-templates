@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: .5.5
+ * Version: .5.6
  */
 
 /*
@@ -42,6 +42,8 @@ add_action('admin_enqueue_scripts', 'pmproet_scripts');
 //get template data
 function pmproet_get_template_data() {
 
+    check_ajax_referer('pmproet', 'security');
+
     global $pmproet_email_defaults;
 
     $template = $_REQUEST['template'];
@@ -69,6 +71,8 @@ add_action('wp_ajax_pmproet_get_template_data', 'pmproet_get_template_data');
 //save template data
 function pmproet_save_template_data() {
 
+    check_ajax_referer('pmproet', 'security');
+
     //update this template's settings
     pmpro_setOption($_REQUEST['template'] . '_subject', stripslashes($_REQUEST['subject']));
     pmpro_setOption($_REQUEST['template'] . '_body', stripslashes($_REQUEST['body']));
@@ -80,6 +84,8 @@ add_action('wp_ajax_pmproet_save_template_data', 'pmproet_save_template_data');
 
 //reset template data
 function pmproet_reset_template_data() {
+
+    check_ajax_referer('pmproet', 'security');
 
     global $pmproet_email_defaults;
 
@@ -99,6 +105,9 @@ add_action('wp_ajax_pmproet_reset_template_data', 'pmproet_reset_template_data')
 
 // disable template
 function pmproet_disable_template() {
+
+    check_ajax_referer('pmproet', 'security');
+
     $template = $_REQUEST['template'];
     $response['result'] = update_option('pmpro_' . $template . '_disabled', $_REQUEST['disabled']);
     $response['status'] = $_REQUEST['disabled'];
@@ -109,6 +118,8 @@ add_action('wp_ajax_pmproet_disable_template', 'pmproet_disable_template');
 
 //send test email
 function pmproet_send_test() {
+
+    check_ajax_referer('pmproet', 'security');
 
     global $pmproet_test_order_id, $current_user;
 

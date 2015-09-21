@@ -13,7 +13,6 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
 
     <form action="" method="post" enctype="multipart/form-data">
         <h2><?php _e('Email Templates', 'pmpro');?></h2>
-
         <table class="form-table">
             <tr class="status hide-while-loading" style="display:none;">
                 <th scope="row" valign="top"></th>
@@ -151,7 +150,7 @@ require_once(PMPRO_DIR . "/adminpages/admin_header.php");
                 </td>
             </tr>
         </table>
-
+        <?php wp_nonce_field('pmproet', 'security'); ?>
     </form>
 
 <?php

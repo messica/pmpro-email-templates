@@ -46,7 +46,6 @@ add_action('admin_enqueue_scripts', 'pmproet_scripts');
 function pmproet_get_template_data() {
 
     check_ajax_referer('pmproet', 'security');
-    fb($_REQUEST, 'request');
 
     global $pmproet_email_defaults;
 

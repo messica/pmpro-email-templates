@@ -56,7 +56,6 @@ jQuery(document).ready(function($) {
         };
 
         $.post(ajaxurl, $data, function(response) {
-
             var template_data = JSON.parse(response);
 
             //show/hide stuff
@@ -66,7 +65,7 @@ jQuery(document).ready(function($) {
             $(".status").hide();
 
             //change disable text
-            if (template == 'email_header' || template === 'email_footer') {
+            if (template == 'header' || template === 'footer') {
 
                 $subject.hide();
 				$testemail.hide();
@@ -100,6 +99,7 @@ jQuery(document).ready(function($) {
 //        $(".controls").hide();
         $("#submit_template_data").attr("disabled", true);
         $(".status").hide();
+        console.log(template);
 
         $data = {
             template: template,

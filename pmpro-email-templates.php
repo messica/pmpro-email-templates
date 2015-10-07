@@ -46,6 +46,7 @@ add_action('admin_enqueue_scripts', 'pmproet_scripts');
 function pmproet_get_template_data() {
 
     check_ajax_referer('pmproet', 'security');
+    fb($_REQUEST, 'request');
 
     global $pmproet_email_defaults;
 
@@ -65,6 +66,7 @@ function pmproet_get_template_data() {
         $template_data['subject'] = $pmproet_email_defaults[$template]['subject'];
     }
 
+    fb($template_data, 'template_data');
     echo json_encode($template_data);
 	
     exit;
@@ -426,8 +428,12 @@ add_filter('pmpro_email_data', 'pmproet_email_data', 10, 2);
  */
 function pmproet_getTemplateBody($template) {
 
+    global $pmproet_email_defaults;
+
     // Load template
-    if ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/email/' . $template . '.html' ) ) {
+    if(!empty($pmproet_email_defaults[$template]['body']))
+        $body = $pmproet_email_defaults[$template]['body'];
+    elseif ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/email/' . $template . '.html' ) ) {
         $file = get_stylesheet_directory() . '/paid-memberships-pro/email/' . $template . '.html';
     } elseif ( file_exists( get_template_directory() . '/paid-memberships-pro/email/' . $template . '.html') ) {
         $file = get_template_directory() . '/paid-memberships-pro/email/' . $template . '.html';
@@ -437,9 +443,9 @@ function pmproet_getTemplateBody($template) {
         $file = 0;
     }
 
-    if( ! $file ) {
+    if( ! $file && ! $body ) {
         $body = '';
-    } else {
+    } elseif( ! $body ) {
         ob_start();
         require_once( $file );
         $body = ob_get_contents();

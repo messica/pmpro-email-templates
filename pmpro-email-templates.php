@@ -65,7 +65,6 @@ function pmproet_get_template_data() {
         $template_data['subject'] = $pmproet_email_defaults[$template]['subject'];
     }
 
-    fb($template_data, 'template_data');
     echo json_encode($template_data);
 	
     exit;

@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: 0.6
+ * Version: 0.6.1
  */
 
 /*
@@ -77,7 +77,7 @@ function pmproet_get_template_data() {
         $template_data['body'] = pmproet_getTemplateBody($template);
     }
 
-    if (empty($template_data['subject']) && $template != "email_header" && $template != "email_footer") {
+    if (empty($template_data['subject']) && $template != "header" && $template != "footer") {
         $template_data['subject'] = $pmproet_email_defaults[$template]['subject'];
     }
 

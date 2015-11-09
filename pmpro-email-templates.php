@@ -5,7 +5,7 @@
  * Author: Stranger Studios
  * Author URI: http://www.strangerstudios.com
  * Plugin URI: http://www.paidmembershipspro.com/add-ons/plugins-wordpress-repository/email-templates-admin-editor/
- * Version: 0.5.7
+ * Version: 0.6.1
  */
 
 /*
@@ -28,6 +28,22 @@ function pmproet_admin_page()
 {
     require_once( plugin_dir_path(__FILE__) ) . "adminpages/emailtemplates.php";
 }
+
+/*
+	Add page to admin bar
+*/
+function pmproet_admin_bar_menu() {
+	global $wp_admin_bar;
+	if ( !is_super_admin() || !is_admin_bar_showing() )
+		return;	
+	$wp_admin_bar->add_menu( array(
+	'id' => 'pmpro-email-templates',
+	'parent' => 'paid-memberships-pro',
+	'title' => __( 'Email Templates', 'pmpro'),
+	'href' => get_admin_url(NULL, '/admin.php?page=pmpro-email-templates') ) );	
+}
+add_action('admin_bar_menu', 'pmproet_admin_bar_menu', 1000);
+
 
 //enqueue js/css
 function pmproet_scripts() {
@@ -61,7 +77,7 @@ function pmproet_get_template_data() {
         $template_data['body'] = pmproet_getTemplateBody($template);
     }
 
-    if (empty($template_data['subject']) && $template != "email_header" && $template != "email_footer") {
+    if (empty($template_data['subject']) && $template != "header" && $template != "footer") {
         $template_data['subject'] = $pmproet_email_defaults[$template]['subject'];
     }
 
@@ -423,7 +439,7 @@ add_filter('pmpro_email_data', 'pmproet_email_data', 10, 2);
  *
  * Checks theme, then template, then PMPro directory.
  *
- * @since 0.5.7
+ * @since 0.6
  *
  * @param $template string
  *
@@ -431,20 +447,24 @@ add_filter('pmpro_email_data', 'pmproet_email_data', 10, 2);
  */
 function pmproet_getTemplateBody($template) {
 
+    global $pmproet_email_defaults;
+
+	// Defaults
+	$body = "";
+	$file = false;
+	
     // Load template
-    if ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/email/' . $template . '.html' ) ) {
+    if(!empty($pmproet_email_defaults[$template]['body']))
+        $body = $pmproet_email_defaults[$template]['body'];
+    elseif ( file_exists( get_stylesheet_directory() . '/paid-memberships-pro/email/' . $template . '.html' ) ) {
         $file = get_stylesheet_directory() . '/paid-memberships-pro/email/' . $template . '.html';
     } elseif ( file_exists( get_template_directory() . '/paid-memberships-pro/email/' . $template . '.html') ) {
         $file = get_template_directory() . '/paid-memberships-pro/email/' . $template . '.html';
     } elseif( file_exists( PMPRO_DIR . '/email/' . $template . '.html')) {
         $file = PMPRO_DIR . '/email/' . $template . '.html';
-    } else {
-        $file = 0;
-    }
-
-    if( ! $file ) {
-        $body = '';
-    } else {
+    } 
+		
+    if( $file && ! $body ) {
         ob_start();
         require_once( $file );
         $body = ob_get_contents();
